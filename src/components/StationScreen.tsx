@@ -2,19 +2,25 @@ import React from 'react';
 import {
   ArrowLeft,
   ArrowRight,
-  Hammer,
   Info,
   Star,
 } from 'lucide-react';
 import { STATIONS } from '../data/stations';
 import { StationDefinition, StationId } from '../types/game';
 import { Station1OldCraftsGame } from './games/Station1OldCraftsGame';
+import { Station2ToolsGame } from './games/Station2ToolsGame';
+import { Station3DetectiveGame } from './games/Station3DetectiveGame';
+import { Station4WorkplacesGame } from './games/Station4WorkplacesGame';
+import { Station5MysteryNamesGame } from './games/Station5MysteryNamesGame';
+import { Station6TruthTowerGame } from './games/Station6TruthTowerGame';
+import { Station7AbilitiesGame } from './games/Station7AbilitiesGame';
+import { Station8FutureGateGame } from './games/Station8FutureGateGame';
 import { StationBuildingArt } from './illustrations/StationBuildingArt';
-import { GuideOwlImage } from './illustrations/StorybookArtwork';
 
 interface StationScreenProps {
   station: StationDefinition;
   isCompleted: boolean;
+  totalStars: number;
   onAwardStar: (stationId: StationId) => void;
   onSelectStation: (stationId: StationId) => void;
   onGoHome: () => void;
@@ -23,6 +29,7 @@ interface StationScreenProps {
 export const StationScreen: React.FC<StationScreenProps> = ({
   station,
   isCompleted,
+  totalStars,
   onAwardStar,
   onSelectStation,
   onGoHome,
@@ -105,53 +112,61 @@ export const StationScreen: React.FC<StationScreenProps> = ({
         </div>
       </section>
 
-      {/* Station 1: Real Interactive Game; Stations 2-8: Placeholder without demo star */}
+      {/* Stations 1-8: Real Interactive Games */}
       {station.id === 1 ? (
         <Station1OldCraftsGame
           isAlreadyCompleted={isCompleted}
           onComplete={() => onAwardStar(1)}
           onGoHome={onGoHome}
         />
+      ) : station.id === 2 ? (
+        <Station2ToolsGame
+          isAlreadyCompleted={isCompleted}
+          totalStarsBefore={totalStars}
+          onComplete={() => onAwardStar(2)}
+          onGoHome={onGoHome}
+        />
+      ) : station.id === 3 ? (
+        <Station3DetectiveGame
+          isAlreadyCompleted={isCompleted}
+          onComplete={() => onAwardStar(3)}
+          onGoHome={onGoHome}
+        />
+      ) : station.id === 4 ? (
+        <Station4WorkplacesGame
+          isAlreadyCompleted={isCompleted}
+          onComplete={() => onAwardStar(4)}
+          onGoHome={onGoHome}
+          onGoToNextStation={() => onSelectStation(5)}
+        />
+      ) : station.id === 5 ? (
+        <Station5MysteryNamesGame
+          isAlreadyCompleted={isCompleted}
+          onComplete={() => onAwardStar(5)}
+          onGoHome={onGoHome}
+          onGoToNextStation={() => onSelectStation(6)}
+        />
+      ) : station.id === 6 ? (
+        <Station6TruthTowerGame
+          isAlreadyCompleted={isCompleted}
+          onComplete={() => onAwardStar(6)}
+          onGoHome={onGoHome}
+          onGoToNextStation={() => onSelectStation(7)}
+        />
+      ) : station.id === 7 ? (
+        <Station7AbilitiesGame
+          isAlreadyCompleted={isCompleted}
+          onComplete={() => onAwardStar(7)}
+          onGoHome={onGoHome}
+          onGoToNextStation={() => onSelectStation(8)}
+        />
       ) : (
-        <section
-          aria-label="Játékterület"
-          className="rounded-3xl border border-slate-200 bg-white shadow-sm p-6 sm:p-10 text-center"
-        >
-          <div className="max-w-xl mx-auto space-y-6">
-            <div className="flex justify-center">
-              <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-3xl overflow-hidden border border-slate-200 bg-amber-50 shadow-xs">
-                <GuideOwlImage className="w-full h-full object-cover" />
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <div className="inline-flex items-center gap-2 text-sm font-semibold text-amber-800">
-                <Hammer className="w-4 h-4" aria-hidden="true" />
-                <span>Előkészületben</span>
-              </div>
-
-              <h2 className="font-display text-2xl sm:text-4xl font-extrabold text-slate-900 text-balance">
-                Hamarosan indul a játék!
-              </h2>
-
-              <p className="text-base sm:text-lg text-slate-600 leading-relaxed">
-                Ezen az állomáson hamarosan megjelennek a játékos feladatok és képek. Addig is
-                felfedezheted az elkészült állomásokat a városban!
-              </p>
-            </div>
-
-            <div className="pt-2 flex justify-center">
-              <button
-                type="button"
-                onClick={onGoHome}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 min-h-[52px] px-6 py-3 rounded-2xl bg-slate-900 text-white font-semibold text-base hover:bg-slate-800 active:scale-[0.99] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2 whitespace-nowrap shrink-0 cursor-pointer"
-              >
-                <ArrowLeft className="w-5 h-5" aria-hidden="true" />
-                <span>Vissza a városba</span>
-              </button>
-            </div>
-          </div>
-        </section>
+        <Station8FutureGateGame
+          isAlreadyCompleted={isCompleted}
+          totalStars={totalStars}
+          onComplete={() => onAwardStar(8)}
+          onGoHome={onGoHome}
+        />
       )}
 
       {/* Bottom Station Step Navigation (Any-order exploration) */}

@@ -83,6 +83,7 @@ export default function App() {
             key={activeStation.id}
             station={activeStation}
             isCompleted={isCompleted(activeStation.id)}
+            totalStars={totalStars}
             onAwardStar={awardStar}
             onSelectStation={handleSelectStation}
             onGoHome={handleGoHome}

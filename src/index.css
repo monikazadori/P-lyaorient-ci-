@@ -36,3 +36,70 @@
     transform: none;
   }
 }
+
+@page {
+  size: A4 landscape;
+  margin: 8mm;
+}
+
+@media print {
+  html,
+  body {
+    background: #ffffff !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  #root,
+  #root > div {
+    min-height: 0 !important;
+    height: auto !important;
+    background: #ffffff !important;
+    display: block !important;
+  }
+
+  header,
+  footer,
+  nav[aria-label="Állomások közötti léptetés"],
+  section[aria-labelledby="station-screen-title"],
+  .no-print {
+    display: none !important;
+  }
+
+  main,
+  .print-diploma-shell {
+    max-width: none !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  main > *,
+  main > * > *,
+  .print-diploma-shell > * {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  #printable-diploma {
+    display: flex !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 176mm !important;
+    max-height: 186mm !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    box-shadow: none !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    break-after: avoid !important;
+    page-break-after: avoid !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
