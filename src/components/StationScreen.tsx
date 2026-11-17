@@ -1,16 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   ArrowLeft,
   ArrowRight,
-  CheckCircle2,
   Hammer,
   Info,
-  RotateCcw,
   Star,
 } from 'lucide-react';
-import { POSITIVE_FEEDBACK_MESSAGES, STATIONS } from '../data/stations';
+import { STATIONS } from '../data/stations';
 import { StationDefinition, StationId } from '../types/game';
-import { playStarChime } from '../utils/sound';
+import { Station1OldCraftsGame } from './games/Station1OldCraftsGame';
 import { StationBuildingArt } from './illustrations/StationBuildingArt';
 import { GuideOwlImage } from './illustrations/StorybookArtwork';
 
@@ -18,7 +16,6 @@ interface StationScreenProps {
   station: StationDefinition;
   isCompleted: boolean;
   onAwardStar: (stationId: StationId) => void;
-  onRevokeStar: (stationId: StationId) => void;
   onSelectStation: (stationId: StationId) => void;
   onGoHome: () => void;
 }
@@ -27,31 +24,12 @@ export const StationScreen: React.FC<StationScreenProps> = ({
   station,
   isCompleted,
   onAwardStar,
-  onRevokeStar,
   onSelectStation,
   onGoHome,
 }) => {
-  const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
-
   const currentIndex = STATIONS.findIndex((s) => s.id === station.id);
   const prevStation = currentIndex > 0 ? STATIONS[currentIndex - 1] : null;
   const nextStation = currentIndex < STATIONS.length - 1 ? STATIONS[currentIndex + 1] : null;
-
-  const handleDemoAwardStar = () => {
-    const msg =
-      POSITIVE_FEEDBACK_MESSAGES[
-        (station.id + Math.floor(Math.random() * POSITIVE_FEEDBACK_MESSAGES.length)) %
-          POSITIVE_FEEDBACK_MESSAGES.length
-      ];
-    onAwardStar(station.id);
-    setFeedbackMessage(msg);
-    playStarChime();
-  };
-
-  const handleDemoResetStation = () => {
-    onRevokeStar(station.id);
-    setFeedbackMessage(null);
-  };
 
   return (
     <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
@@ -127,81 +105,54 @@ export const StationScreen: React.FC<StationScreenProps> = ({
         </div>
       </section>
 
-      {/* Station Play Area (Placeholder until individual game tasks are added) */}
-      <section
-        aria-label="Játékterület"
-        className="rounded-3xl border border-slate-200 bg-white shadow-sm p-6 sm:p-10 text-center"
-      >
-        <div className="max-w-xl mx-auto space-y-6">
-          <div className="flex justify-center">
-            <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-3xl overflow-hidden border border-slate-200 bg-amber-50 shadow-xs">
-              <GuideOwlImage className="w-full h-full object-cover" />
+      {/* Station 1: Real Interactive Game; Stations 2-8: Placeholder without demo star */}
+      {station.id === 1 ? (
+        <Station1OldCraftsGame
+          isAlreadyCompleted={isCompleted}
+          onComplete={() => onAwardStar(1)}
+          onGoHome={onGoHome}
+        />
+      ) : (
+        <section
+          aria-label="Játékterület"
+          className="rounded-3xl border border-slate-200 bg-white shadow-sm p-6 sm:p-10 text-center"
+        >
+          <div className="max-w-xl mx-auto space-y-6">
+            <div className="flex justify-center">
+              <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-3xl overflow-hidden border border-slate-200 bg-amber-50 shadow-xs">
+                <GuideOwlImage className="w-full h-full object-cover" />
+              </div>
             </div>
-          </div>
 
-          <div className="space-y-3">
-            <div className="inline-flex items-center gap-2 text-sm font-semibold text-amber-800">
-              <Hammer className="w-4 h-4" aria-hidden="true" />
-              <span>Előkészületben</span>
-            </div>
+            <div className="space-y-3">
+              <div className="inline-flex items-center gap-2 text-sm font-semibold text-amber-800">
+                <Hammer className="w-4 h-4" aria-hidden="true" />
+                <span>Előkészületben</span>
+              </div>
 
-            <h2 className="font-display text-2xl sm:text-4xl font-extrabold text-slate-900 text-balance">
-              Hamarosan indul a játék!
-            </h2>
+              <h2 className="font-display text-2xl sm:text-4xl font-extrabold text-slate-900 text-balance">
+                Hamarosan indul a játék!
+              </h2>
 
-            <p className="text-base sm:text-lg text-slate-600 leading-relaxed">
-              Ezen az állomáson hamarosan megjelennek a játékos feladatok és képek. Addig is
-              kipróbálhatod a csillaggyűjtő rendszert vagy felfedezheted a város többi épületét!
-            </p>
-          </div>
-
-          {/* Positive feedback message when demo star is awarded */}
-          {(feedbackMessage || isCompleted) && (
-            <div
-              role="status"
-              aria-live="polite"
-              className="rounded-2xl bg-emerald-50 border border-emerald-200 p-4 sm:p-5 flex items-center justify-center gap-3 text-emerald-900"
-            >
-              <CheckCircle2 className="w-6 h-6 text-emerald-600 shrink-0" aria-hidden="true" />
-              <p className="text-base sm:text-lg font-semibold">
-                {feedbackMessage || 'Szép munka! Ez az állomás már teljesítve van.'}
+              <p className="text-base sm:text-lg text-slate-600 leading-relaxed">
+                Ezen az állomáson hamarosan megjelennek a játékos feladatok és képek. Addig is
+                felfedezheted az elkészült állomásokat a városban!
               </p>
             </div>
-          )}
 
-          {/* Primary & Demo Actions */}
-          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
-            {!isCompleted ? (
+            <div className="pt-2 flex justify-center">
               <button
                 type="button"
-                onClick={handleDemoAwardStar}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 min-h-[52px] px-6 py-3 rounded-2xl bg-amber-500 text-slate-950 font-bold text-base hover:bg-amber-400 active:scale-[0.99] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2 whitespace-nowrap shrink-0 cursor-pointer"
+                onClick={onGoHome}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 min-h-[52px] px-6 py-3 rounded-2xl bg-slate-900 text-white font-semibold text-base hover:bg-slate-800 active:scale-[0.99] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2 whitespace-nowrap shrink-0 cursor-pointer"
               >
-                <Star className="w-5 h-5 fill-slate-950" aria-hidden="true" />
-                <span>Próbacsillag szerzése</span>
+                <ArrowLeft className="w-5 h-5" aria-hidden="true" />
+                <span>Vissza a városba</span>
               </button>
-            ) : (
-              <button
-                type="button"
-                onClick={handleDemoResetStation}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 min-h-[52px] px-6 py-3 rounded-2xl border border-slate-300 bg-white text-slate-800 font-semibold text-base hover:bg-slate-50 active:scale-[0.99] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 focus-visible:ring-offset-2 whitespace-nowrap shrink-0 cursor-pointer"
-              >
-                <RotateCcw className="w-5 h-5 text-slate-600" aria-hidden="true" />
-                <span>Állomás újrakezdése</span>
-              </button>
-            )}
-
-            <button
-              type="button"
-              onClick={onGoHome}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 min-h-[52px] px-6 py-3 rounded-2xl bg-slate-900 text-white font-semibold text-base hover:bg-slate-800 active:scale-[0.99] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2 whitespace-nowrap shrink-0 cursor-pointer"
-            >
-              <ArrowLeft className="w-5 h-5" aria-hidden="true" />
-              <span>Vissza a városba</span>
-            </button>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Bottom Station Step Navigation (Any-order exploration) */}
       <nav
@@ -211,10 +162,7 @@ export const StationScreen: React.FC<StationScreenProps> = ({
         {prevStation ? (
           <button
             type="button"
-            onClick={() => {
-              setFeedbackMessage(null);
-              onSelectStation(prevStation.id);
-            }}
+            onClick={() => onSelectStation(prevStation.id)}
             className="inline-flex items-center justify-center sm:justify-start gap-2 min-h-[48px] px-5 py-3 rounded-2xl border border-slate-200 bg-white text-slate-800 font-semibold text-base hover:bg-slate-50 transition-colors cursor-pointer"
           >
             <ArrowLeft className="w-5 h-5 text-slate-500 shrink-0" aria-hidden="true" />
@@ -229,10 +177,7 @@ export const StationScreen: React.FC<StationScreenProps> = ({
         {nextStation ? (
           <button
             type="button"
-            onClick={() => {
-              setFeedbackMessage(null);
-              onSelectStation(nextStation.id);
-            }}
+            onClick={() => onSelectStation(nextStation.id)}
             className="inline-flex items-center justify-center sm:justify-end gap-2 min-h-[48px] px-5 py-3 rounded-2xl border border-slate-200 bg-white text-slate-800 font-semibold text-base hover:bg-slate-50 transition-colors cursor-pointer"
           >
             <span className="truncate">

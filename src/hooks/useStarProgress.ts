@@ -2,14 +2,29 @@ import { useCallback, useEffect, useState } from 'react';
 import { STATIONS } from '../data/stations';
 import { StationId } from '../types/game';
 
-const STORAGE_KEY = 'mestersegek_birodalma_stars_v1';
+const LEGACY_DEMO_STORAGE_KEY = 'mestersegek_birodalma_stars_v1';
+const STORAGE_KEY = 'mestersegek_birodalma_stars_v2';
 
 const VALID_IDS = new Set<number>(STATIONS.map((s) => s.id));
+
+function clearLegacyDemoProgress(): void {
+  if (typeof window === 'undefined') {
+    return;
+  }
+  try {
+    if (window.localStorage.getItem(LEGACY_DEMO_STORAGE_KEY) !== null) {
+      window.localStorage.removeItem(LEGACY_DEMO_STORAGE_KEY);
+    }
+  } catch {
+    // Ignore storage errors gracefully
+  }
+}
 
 function loadStoredStars(): StationId[] {
   if (typeof window === 'undefined') {
     return [];
   }
+  clearLegacyDemoProgress();
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) {
@@ -56,12 +71,14 @@ export function useStarProgress() {
     });
   }, []);
 
-  const revokeStar = useCallback((stationId: StationId) => {
-    setCompletedStationIds((prev) => prev.filter((id) => id !== stationId));
-  }, []);
-
   const resetAllStars = useCallback(() => {
     setCompletedStationIds([]);
+    try {
+      window.localStorage.removeItem(LEGACY_DEMO_STORAGE_KEY);
+      window.localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      // Ignore storage errors gracefully
+    }
   }, []);
 
   return {
@@ -71,7 +88,6 @@ export function useStarProgress() {
     isAllCompleted: completedStationIds.length === STATIONS.length,
     isCompleted,
     awardStar,
-    revokeStar,
     resetAllStars,
   };
 }

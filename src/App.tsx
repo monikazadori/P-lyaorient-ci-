@@ -32,7 +32,6 @@ export default function App() {
     maxStars,
     isCompleted,
     awardStar,
-    revokeStar,
     resetAllStars,
   } = useStarProgress();
 
@@ -85,7 +84,6 @@ export default function App() {
             station={activeStation}
             isCompleted={isCompleted(activeStation.id)}
             onAwardStar={awardStar}
-            onRevokeStar={revokeStar}
             onSelectStation={handleSelectStation}
             onGoHome={handleGoHome}
           />
